@@ -1,0 +1,42 @@
+@model GenoomTree.Models.People
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h2>Details</h2>
+<label>Tree :</label>  @ViewBag.tree
+<div>
+    <h4>People</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Birthday)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Birthday)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Parent1Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Parent1Id)
+        </dd>
+        <dt>
+            @Html.DisplayNameFor(model => model.Parent2Id)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.Parent2Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.PersonId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

@@ -1,0 +1,64 @@
+@model IEnumerable<GenoomTree.Models.People>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Persons</h2>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PersonId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Birthday)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Parent1Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Parent2Id)
+                </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Birthday)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Parent1Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Parent2Id)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PersonId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.PersonId">Delete</a> |
+                <a asp-action="Details" asp-route-id="@item.PersonId">Details (a)</a> |
+                <a asp-action="Family" asp-route-id="@item.PersonId">Family (b)</a> |
+                <a asp-action="parents" asp-route-id="@item.PersonId">Creates parents (c)</a> |
+                <a asp-action="children" asp-route-id="@item.PersonId">Add child (d)</a> |
+                <a asp-action="tree" asp-route-id="@item.PersonId">show tree (e)</a> |
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

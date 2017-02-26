@@ -1,0 +1,13 @@
+
+<label>Family :</label>  
+
+@foreach (var item in (IEnumerable<GenoomTree.Models.People>)ViewBag.Family)
+{
+    <p>@item.Name</p>
+}
+
+}
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
