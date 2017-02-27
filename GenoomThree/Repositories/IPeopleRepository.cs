@@ -16,5 +16,8 @@ namespace GenoomTree.Repositories
         int CreateEmptyParent2(int id);
         People PersonPartner(int Id);
         int CreateChild(int PersonId, int PartnerId);
+        void Add(People person);
+        void Delete(int? id);
+        void Update(People person);
     }
 }

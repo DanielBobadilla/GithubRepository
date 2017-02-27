@@ -11,6 +11,8 @@ namespace GenoomTree.Repositories
     {
         private readonly GenoomContext db;
 
+
+        #region public methods
         public PeopleRepository(GenoomContext context)
         {
             db = context;
@@ -44,7 +46,6 @@ namespace GenoomTree.Repositories
             family.AddRange(siblings);
             family.AddRange(childrend);
             family.AddRange(partners);
-            family.AddRange(family);
 
             return family;
         }
@@ -96,6 +97,29 @@ namespace GenoomTree.Repositories
             return child.PersonId;
         }
 
+        public void Add (People person)
+        {
+            db.People.Add(person);
+            db.SaveChanges();
+        }
+
+        public void Delete (int? id)
+        {
+            People person = Get(id);
+            db.People.Remove(person);
+            db.SaveChanges();
+        }
+
+        public void Update(People person)
+        {
+            db.Entry(person).State = Microsoft.EntityFrameworkCore.EntityState.Modified ;
+            db.SaveChanges();
+        }
+
+
+        #endregion
+
+        #region Private methods
         private void UpdateParent1 (int id, int Parent1Id)
         {
             People person = Get(id);
@@ -119,9 +143,9 @@ namespace GenoomTree.Repositories
 
             People parent2 = db.People.Where(a => a.PersonId == people.Parent2Id).SingleOrDefault();
 
-            List <People> result = new List <People> ();
-            result.Append(parent1);
-            result.Append(parent2);
+            List <People> result = new List<People> () ;
+            result.Add(parent1);
+            result.Add(parent2);
 
             return result; 
 
@@ -155,11 +179,23 @@ namespace GenoomTree.Repositories
 
             foreach (People child in childrens )
             {
-                if (child.Parent1Id != null && child.Parent1Id != parent.PersonId )
+                bool Exist = false;
+                foreach (People paren in partners )
+                {
+                    if ((paren.PersonId == child.Parent1Id ) || (paren.PersonId == child.Parent2Id))
+                    {
+                        Exist = true;
+                    }
+                }
+
+                if (Exist)
+                    continue;
+                    if (child.Parent1Id != null && child.Parent1Id != parent.PersonId )
                 {
                     partners.Add(Get(child.Parent1Id));
                 }
 
+                
                 if (child.Parent2Id != null && child.Parent2Id != parent.PersonId)
                 {
                     partners.Add(Get(child.Parent2Id));
@@ -170,7 +206,7 @@ namespace GenoomTree.Repositories
 
         }
 
-
+        #endregion
 
     }
 

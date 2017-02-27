@@ -92,7 +92,8 @@ namespace GenoomTree.Controllers
         // POST: People/parents 
         // GenerateEmptyParents
         [HttpPost]
-        public ActionResult parents (int id)
+        [ActionName("parents")]
+        public ActionResult parentsPost (int id)
         {
             List<int> results = new List<int>();
 
@@ -133,7 +134,8 @@ namespace GenoomTree.Controllers
         // POST: People/Children
         
         [HttpPost]
-        public ActionResult children(int id)
+        [ActionName("children")]
+        public ActionResult childrenPost(int id)
         {
 
             if (ModelState.IsValid)
@@ -171,6 +173,7 @@ namespace GenoomTree.Controllers
             textTree = new StringBuilder();
             PreOrder_Rec(people.PersonId);
             ViewBag.tree = textTree.ToString();
+
             return View("tree", people);
         }
 
@@ -179,116 +182,118 @@ namespace GenoomTree.Controllers
             if (Id != null)
             {
                 People person = repository.Get(Id);
-                textTree.Append(Environment.NewLine+"Name :" + person.Name );
-                Console.Write(person.Name + "   ");
+
+                StringBuilder spaces = new StringBuilder();
+                for (int i =0; i < Line ; i++)
+                {
+                    spaces.Append(tab);
+                }
+
+                textTree.Append(spaces.ToString ()+"{Name :" + person.Name + " , <br />");
+                if ((person.Parent1Id != null) && (person.Parent2Id != null))
+                {
+                    textTree.Append(spaces.ToString() + tab + "Parents : [ <br />");
+                    Line++;
+                }
+                Line++;
+                int tempLine = Line;
+                StringBuilder tempSpaces = new StringBuilder();
+
+                for (int j = 0; j < tempLine; j++)
+                {
+                    tempSpaces.Append(tab);
+                }
                 PreOrder_Rec(person.Parent1Id);
                 PreOrder_Rec(person.Parent2Id);
+                textTree.Append(tempSpaces.ToString() + " ]}  <br />");
             }
         }
 
-
+        private int Line = 0 ; 
         private StringBuilder textTree;
+        const string tab = "&nbsp;&nbsp;&nbsp;&nbsp;";
 
 
-        //    // POST: People/Create
-        //    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //    // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> Create([Bind("PersonId,Name,Birthday,Parent1Id,Parent2Id")] People people)
-        //    {
-        //        if (ModelState.IsValid)
-        //        {
-        //            _context.Add(people);
-        //            await _context.SaveChangesAsync();
-        //            return RedirectToAction("Index");
-        //        }
-        //        return View(people);
-        //    }
+        // POST: People/Create
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind("PersonId,Name,Birthday,Parent1Id,Parent2Id")] People people)
+        {
+            if (ModelState.IsValid)
+            {
+                repository.Add(people);
+                return RedirectToAction("Index");
+            }
+            return View(people);
+        }
 
-        //    // GET: People/Edit/5
-        //    public async Task<IActionResult> Edit(int? id)
-        //    {
-        //        if (id == null)
-        //        {
-        //            return NotFound();
-        //        }
+        // GET: People/Edit/5
+        public ActionResult Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //        var people = await _context.People.SingleOrDefaultAsync(m => m.PersonId == id);
-        //        if (people == null)
-        //        {
-        //            return NotFound();
-        //        }
-        //        return View(people);
-        //    }
+            var people = repository.Get (id) ;
+            if (people == null)
+            {
+                return NotFound();
+            }
+            return View(people);
+        }
 
-        //    // POST: People/Edit/5
-        //    // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        //    // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //    [HttpPost]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> Edit(int id, [Bind("PersonId,Name,Birthday,Parent1Id,Parent2Id")] People people)
-        //    {
-        //        if (id != people.PersonId)
-        //        {
-        //            return NotFound();
-        //        }
+        // POST: People/Edit/5
+        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
+        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("PersonId,Name,Birthday,Parent1Id,Parent2Id")] People people)
+        {
+            if (id != people.PersonId)
+            {
+                return NotFound();
+            }
 
-        //        if (ModelState.IsValid)
-        //        {
-        //            try
-        //            {
-        //                _context.Update(people);
-        //                await _context.SaveChangesAsync();
-        //            }
-        //            catch (DbUpdateConcurrencyException)
-        //            {
-        //                if (!PeopleExists(people.PersonId))
-        //                {
-        //                    return NotFound();
-        //                }
-        //                else
-        //                {
-        //                    throw;
-        //                }
-        //            }
-        //            return RedirectToAction("Index");
-        //        }
-        //        return View(people);
-        //    }
+            if (ModelState.IsValid)
+            {
+                repository.Update(people);
+                return RedirectToAction("Index");
+            }
+            return View(people);
+        }
 
-        //    // GET: People/Delete/5
-        //    public async Task<IActionResult> Delete(int? id)
-        //    {
-        //        if (id == null)
-        //        {
-        //            return NotFound();
-        //        }
+        // GET: People/Delete/5
+        public ActionResult Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
 
-        //        var people = await _context.People
-        //            .SingleOrDefaultAsync(m => m.PersonId == id);
-        //        if (people == null)
-        //        {
-        //            return NotFound();
-        //        }
+            var people = repository.Get(id);
+            if (people == null)
+            {
+                return NotFound();
+            }
 
-        //        return View(people);
-        //    }
+            return View(people);
+        }
 
-        //    // POST: People/Delete/5
-        //    [HttpPost, ActionName("Delete")]
-        //    [ValidateAntiForgeryToken]
-        //    public async Task<IActionResult> DeleteConfirmed(int id)
-        //    {
-        //        var people = await _context.People.SingleOrDefaultAsync(m => m.PersonId == id);
-        //        _context.People.Remove(people);
-        //        await _context.SaveChangesAsync();
-        //        return RedirectToAction("Index");
-        //    }
+        // POST: People/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public ActionResult DeleteConfirmed(int id)
+        {
+            repository.Delete (id);
+            return RedirectToAction("Index");
+        }
 
-        //    private bool PeopleExists(int id)
-        //    {
-        //        return _context.People.Any(e => e.PersonId == id);
-        //    }
+        //private bool PeopleExists(int id)
+        //{
+        //    return _context.People.Any(e => e.PersonId == id);
+        //}
     }
 }

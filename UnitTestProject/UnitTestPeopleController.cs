@@ -13,9 +13,8 @@ namespace UnitTestProject
     [TestClass]
     public class UnitTestPeopleController
     {
-
         [TestMethod]
-        public void NameDetails()
+        public void ViewNameDetails()
         {
             
             //Arrengue
@@ -34,7 +33,7 @@ namespace UnitTestProject
         }
 
         [TestMethod]
-        public void NameFamily()
+        public void ViewNameFamily()
         {
             //Arrengue
             var repository = new Mock<IPeopleRepository>();
@@ -57,7 +56,59 @@ namespace UnitTestProject
 
 
         }
+        [TestMethod]
+        public void ViewNameTree ()
+        {
+            //Arrengue
+            var repository = new Mock<IPeopleRepository>();
 
+            var people = new People { PersonId = 1, Name = "Orvile Simpson", Parent1Id = null, Parent2Id = null, Birthday = DateTime.MinValue };
+            repository.Setup(x => x.Get(1)).Returns(people);
+            PeopleController controller = new PeopleController(repository.Object);
+
+
+            // Act
+            ViewResult result = controller.tree(1) as ViewResult;
+
+            // Assert
+            Assert.AreEqual("tree", result.ViewName);
+        }
+
+        [TestMethod]
+        public void ViewNameChildren()
+        {
+            //Arrengue
+            var repository = new Mock<IPeopleRepository>();
+
+            var people = new People { PersonId = 1, Name = "Orvile Simpson", Parent1Id = null, Parent2Id = null, Birthday = DateTime.MinValue };
+            repository.Setup(x => x.Get(1)).Returns(people);
+            PeopleController controller = new PeopleController(repository.Object);
+
+
+            // Act
+            ViewResult result = controller.children(1) as ViewResult;
+
+            // Assert
+            Assert.AreEqual("children", result.ViewName);
+        }
+
+        [TestMethod]
+        public void ViewNameParents()
+        {
+            //Arrengue
+            var repository = new Mock<IPeopleRepository>();
+
+            var people = new People { PersonId = 1, Name = "Orvile Simpson", Parent1Id = null, Parent2Id = null, Birthday = DateTime.MinValue };
+            repository.Setup(x => x.Get(1)).Returns(people);
+            PeopleController controller = new PeopleController(repository.Object);
+
+
+            // Act
+            ViewResult result = controller.parents(1) as ViewResult;
+
+            // Assert
+            Assert.AreEqual("parents", result.ViewName);
+        }
         [TestMethod]
         public void PersonHaveParents()
         {
@@ -78,5 +129,7 @@ namespace UnitTestProject
             Assert.AreEqual(null, result);
 
         }
+
+
     }
 }
