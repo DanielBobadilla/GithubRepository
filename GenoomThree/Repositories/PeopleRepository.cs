@@ -46,7 +46,7 @@ namespace GenoomTree.Repositories
             family.AddRange(siblings);
             family.AddRange(childrend);
             family.AddRange(partners);
-
+            family = family.Where(x => x != null).ToList();
             return family;
         }
 
